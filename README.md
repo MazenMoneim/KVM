@@ -12,7 +12,7 @@
 
 <hr/>
 
-## Introduction
+# Introduction
 KVM (Kernel-based Virtual Machine) is an open-source virtualization infrastructure for the Linux kernel that transforms it into a type-1 hypervisor.
 
 
@@ -50,7 +50,7 @@ KVM (Kernel-based Virtual Machine) is an open-source virtualization infrastructu
 <hr/>
 
 
-## Hypervisor Comparison
+# Hypervisor Comparison
 
 ### Type 1 Hypervisor (Bare-Metal)
 Runs directly on the host's hardware to control the hardware and manage guest OSes.
@@ -89,7 +89,7 @@ Runs as a software layer on top of a host operating system.
 
 <hr/>
 
-## Important Terminology for KVM
+# Important Terminology for KVM
 
 <br/>
 
@@ -100,5 +100,26 @@ Runs as a software layer on top of a host operating system.
 | **Virt-manager** | Graphical tool for managing VMs                                         | 
 | **Virt-install** | CLI tool for installing guest VMs                                       | 
 | **Libvirtd**  | Background service that manages KVM virtualization                          |
+
+<br/>
+
+<hr/>
+
+# KVM Installation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
