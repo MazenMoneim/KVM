@@ -107,10 +107,63 @@ Runs as a software layer on top of a host operating system.
 
 # KVM Installation
 
+> **Note:**  
+> KVM is typically installed directly on a Linux OS, but for testing purposes, we set it up inside a virtual machine running on VMware Workstation under Windows. This creates a two-layer virtualization setup ... yes, it might sound crazy, but it provides valuable hands-on experience with KVM and deepens your understanding of nested virtualization.
 
+## Prerequestes
+- Two hard disks
+- Two NICs
+- Enough CPU and Memory
 
+<br/>
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/61c0e644-9bf6-4ca7-8ed3-ffd96baf1856" width="650" />
+</p>
 
+## Installation Steps
+Check cpu info if it supports the vmx or svm for virtualization
+
+```bash
+grep -E --color=auto 'vmx|svm|0xc0f' /proc/cpuinfo
+```
+
+If there is no output, check the virtualize Intel VT option in processor, VM setting  
+
+![image](https://github.com/user-attachments/assets/38cbfa86-72f0-45cf-99d0-add0b33c9f25)
+
+Configure repos in Centos
+```bash
+sudo vi /etc/yum.repos.d/CentOS-Base.repo
+```
+Edit the baseurl and hash the mirror
+```bash
+baseurl=http://vault.centos.org/7.9.2009/os/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=7&arch=$basearch&repo=os&infra=stock
+```
+After editing use this commands
+```bash
+sudo yum clean all
+sudo yum makecache
+sudo yum update
+```
+Install these packages
+```bash
+yum install virt-install qemu-kvm libvirt libvirt-python libquestfs-tools virt-manager -y
+```
+Enable the libvirtd daemon
+```bash
+systemctl enable --now libvirtd
+```
+Reboot the kvm-host
+```bash
+systemctl reboot
+```
+Ensure the kernel modules for kvm are loaded
+```bash
+modinfo kvm_intel
+modinfo kvm
+```
 
 
 
