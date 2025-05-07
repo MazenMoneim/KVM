@@ -291,13 +291,13 @@ The typical architecture looks like this:
 
 ## Features of QEMU in KVM
 
--  Device Emulation:
-  - Emulates standard PC hardware (PIIX3/4 IDE, PS/2 mouse/keyboard, etc.)
-  - Can emulate various network cards, sound cards, and other peripherals
+### Device Emulation:
+- Emulates standard PC hardware (PIIX3/4 IDE, PS/2 mouse/keyboard, etc.)
+- Can emulate various network cards, sound cards, and other peripherals
 
-- Dynamic Translation:
-  - Translates guest CPU instructions to host instructions
-  - When used with KVM, most instructions run natively on hardware
+### Dynamic Translation:
+- Translates guest CPU instructions to host instructions
+- When used with KVM, most instructions run natively on hardware
 
 ## To create a KVM virtual machine using QEMU:
 ```bash
