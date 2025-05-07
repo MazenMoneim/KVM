@@ -1,4 +1,4 @@
-<h1 align="center">Kernel-based Virtual Machine</h1>  
+![image](https://github.com/user-attachments/assets/feefce96-1665-4a95-b7cd-689e5e872ce5)![image](https://github.com/user-attachments/assets/59715578-5c40-4b0d-b8e9-7a6f294d90e2)<h1 align="center">Kernel-based Virtual Machine</h1>  
 <p align="center">  
   <img src="https://img.shields.io/badge/-Virtualization-blue?style=flat" />  
   <img src="https://img.shields.io/badge/-KVM-red?style=flat" />  
@@ -164,15 +164,96 @@ Ensure the kernel modules for kvm are loaded
 modinfo kvm_intel
 modinfo kvm
 ```
+Configure the network in the kvm-host
+- edit this file: /etc/sysconfig/network-scripts/ifcfg-<interface-name>
+```bash
+TYPE=Ethernet
+BOOTPROTO=none
+NAME=<interface-name>
+ONBOOT=yes
+BRIDGE=virbr0
+```
+- create this file: /etc/sysconfig/network-scripts/ifcfg-virbr0
+```bash
+TYPE=BRIDGE
+DEVICE=virbr0
+BOOTPROTO=none
+ONBOOT=yes
+IPADDR=<Natting-ip-in-your-system>
+NETMASK=255.255.255.0
+GATWAY=<your-gateway-in-your-system>
+```
+Enable forwarding 
+```bash
+echo net.ipv4.ip_forward = 1 > /usr/lib/sysctl.d/60-libvirtd.conf
+/sbin/sysctl -p /usr/lib/sysctl.d/60-libvirtd.conf
+```
+Configure the firewalld
+```bash
+firewall-cmd --permanent --direct --passthrough ipv4 -I FORWARD -i bridge0 -j ACCEPT
+firewall-cmd --permanent --direct --passthrough ipv4 -I FORWARD -o bridge0 -j ACCEPT
+firewall-cmd --reload
+```
+List the interfaces of the kvm-host
+```bash
+virsh net-list
+```
+Edit the default interface
+```bash
+virsh net-dumpxml default
+virsh net-edit default
+```
+Create storage pool for storing th VM images
+```bash
+vgcreate lab-kvm-storage /dev/sdb
+lvcreate -l +100%FREE -n lab-kvm-lv lab-kvm-storage
+mkfs.xfs /dev/mapper/lab--kvm--storage-lab--kvm--lv
+```
+Add the following entry in /etc/fstab
+```bash
+echo "/dev/mapper/lab--kvm--storage-lab--kvm--lv   /var/lib/libvirt/images    xfs    defaults 0  0" >> /etc/fstab
+mount –a
+```
+Create storage pool and start it
+```bash
+virsh pool-define-as lab-kvm-storagepool  --type dir --target /var/lib/libvirt/images
+virsh pool-autostart lab-kvm-storagepool
+virsh pool-start  lab-kvm-storagepool
+virsh pool-list
+```
+To see detailed info about pool
+```bash
+virsh pool-list --all --details
+```
+Check if the guest OS is supported by kvm or not
+```bash
+osinfo-query os
+```
+## To create vm with command line
+<img src="https://github.com/user-attachments/assets/f127ff4d-9968-4b3d-ba83-c8c78e7c2495" width="650" />
 
+<br/>
 
+Copy the iso from windows to vm in vmware workstation
+```bash
+scp "E:\Linux ISO\CentOS-7-x86_64-Minimal-2009.iso" root@<ip-of-kvm-host:/
+```
+Change the permissions in iso
+```bash
+chmod 755 name-of-the-iso-file
+```
+Use virt-manager to create vm in GUI
+```bash
+virt-manager
+```
+Choose ur customize resoure but choose the network virbr0
 
+<br/>
 
-
-
-
-
-
+## And then… heywalla
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/132c2cc9-68e9-45f6-b50d-d800186e0734" width="700" />
+</p>
 
 
 
