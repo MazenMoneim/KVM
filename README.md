@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/feefce96-1665-4a95-b7cd-689e5e872ce5)![image](https://github.com/user-attachments/assets/59715578-5c40-4b0d-b8e9-7a6f294d90e2)<h1 align="center">Kernel-based Virtual Machine</h1>  
+![image](https://github.com/user-attachments/assets/436a0954-e53c-4192-8827-a4502c73eb35)![image](https://github.com/user-attachments/assets/a0248aad-be0d-4425-bab5-adbe646291ba)![image](https://github.com/user-attachments/assets/a42681be-b009-4c96-b11d-4319590a43bd)![image](https://github.com/user-attachments/assets/32dcf78f-e00d-4284-ab55-fa38412c133c)![image](https://github.com/user-attachments/assets/feefce96-1665-4a95-b7cd-689e5e872ce5)![image](https://github.com/user-attachments/assets/59715578-5c40-4b0d-b8e9-7a6f294d90e2)<h1 align="center">Kernel-based Virtual Machine</h1>  
 <p align="center">  
   <img src="https://img.shields.io/badge/-Virtualization-blue?style=flat" />  
   <img src="https://img.shields.io/badge/-KVM-red?style=flat" />  
@@ -20,8 +20,18 @@ KVM (Kernel-based Virtual Machine) is an open-source virtualization infrastructu
 - **Scalability**: Supports large-scale virtualization deployments
 - **Cost-effective**: Open-source solution with no licensing fees
 - **Security**: Integrates with Linux security features including SELinux
+- **Thin Provisioing**: Kvm works with thin provisioing in the aspect of disks file as snap below
+
+<br/>
+
+![image](https://github.com/user-attachments/assets/26a80bfc-f6d0-43a8-ab15-38853e4eaab2)
+
+<br/>
+
 - **Live and Offline Migration**: Supports both live and offline VM migration, this feature helps when any maintenance is planned on the KVM host
 - **Resource `Overcommitment`**: Enables allocation of more virtual resources than physically available
+
+<br/>
 
 > **Note:**  
 > Overcommitting in KVM (Kernel-based Virtual Machine) refers to the practice of allocating more virtualized resources to guest virtual machines than are physically available on the host system. This is possible because most VMs don't use 100% of their allocated resources at all times.
@@ -165,6 +175,9 @@ modinfo kvm_intel
 modinfo kvm
 ```
 Configure the network in the kvm-host
+> **Note:**  
+> Libvirtd and it's services create a virtual bridge interface virbr0 with network 192.168.122.0/24 and create a nic virbr0-nic
+
 - edit this file: /etc/sysconfig/network-scripts/ifcfg-<interface-name>
 ```bash
 TYPE=Ethernet
@@ -214,7 +227,7 @@ Add the following entry in /etc/fstab
 echo "/dev/mapper/lab--kvm--storage-lab--kvm--lv   /var/lib/libvirt/images    xfs    defaults 0  0" >> /etc/fstab
 mount –a
 ```
-Create storage pool and start it
+Create storage pool and start it, By default the libvirt use directory /var/lib/libvirt/images on a host as an initial file system storage pool
 ```bash
 virsh pool-define-as lab-kvm-storagepool  --type dir --target /var/lib/libvirt/images
 virsh pool-autostart lab-kvm-storagepool
@@ -230,6 +243,9 @@ Check if the guest OS is supported by kvm or not
 osinfo-query os
 ```
 ## To create vm with command line
+> **Note:**  
+> In kvm termenology .. domain is equal to vm
+> 
 <img src="https://github.com/user-attachments/assets/f127ff4d-9968-4b3d-ba83-c8c78e7c2495" width="650" />
 
 <br/>
@@ -254,6 +270,57 @@ Choose ur customize resoure but choose the network virbr0
 <p align="center">
     <img src="https://github.com/user-attachments/assets/132c2cc9-68e9-45f6-b50d-d800186e0734" width="700" />
 </p>
+
+<hr/>
+
+# Understanding QEMU
+
+QEMU (Quick Emulator) is a critical component in the KVM (Kernel-based Virtual Machine) virtualization stack.
+Here's a detailed explanation:
+## QEMU's Role in KVM
+QEMU is an open-source machine emulator and virtualizer that works alongside KVM to provide complete virtualization solutions. In the KVM context
+- Hardware Emulation: QEMU provides device emulation (CPU, memory, storage, network devices, etc.)
+- User-space Component: While KVM operates in kernel space, QEMU runs in user space handling I/O and device emulation
+- Management Interface: QEMU offers tools and interfaces to manage virtual machines
+
+## How QEMU and KVM Work Together
+The typical architecture looks like this:
+`Guest OS → KVM (kernel module) → QEMU (user space) → Host OS Hardware`
+- KVM handles the CPU and memory virtualization (via kernel modules)
+- QEMU handles the emulation of all other hardware components
+
+## Features of QEMU in KVM
+
+-  Device Emulation:
+  - Emulates standard PC hardware (PIIX3/4 IDE, PS/2 mouse/keyboard, etc.)
+  - Can emulate various network cards, sound cards, and other peripherals
+
+- Dynamic Translation:
+  - Translates guest CPU instructions to host instructions
+  - When used with KVM, most instructions run natively on hardware
+
+## To create a KVM virtual machine using QEMU:
+```bash
+qemu-system-x86_64 -enable-kvm -m 2048 -hda /path/to/disk.img -cdrom /path/to/iso.iso
+```
+> **Note:**  
+> In modern Linux distributions, you'll typically interact with QEMU through higher-level tools like libvirt and virt-manager rather than directly with QEMU commands.
+
+## Conclusion
+- Kvm is the hypervisor
+- Qemu is the command line interface for managing the vms
+- Libvirt is the graphical user interface for managing the vms
+
+
+
+
+
+
+
+
+
+
+
 
 
 
