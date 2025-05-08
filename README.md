@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/22ebcf9d-923f-4f5f-9aa8-ae52645a912a)<h1 align="center">
+<h1 align="center">
 Kernel-based Virtual Machine
 </h1>  
 
