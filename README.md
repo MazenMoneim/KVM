@@ -1,4 +1,4 @@
-<h1 align="center">
+![image](https://github.com/user-attachments/assets/2272dd3d-30b6-4ee0-a4ed-d81ceee2f5de)<h1 align="center">
 Kernel-based Virtual Machine
 </h1>  
 
@@ -380,13 +380,24 @@ To show the uuid for the VM:
 ```bash
 virsh domuid <VM-id or Name>
 ```
+## Configuration of the VM using virt-manager
+![image](https://github.com/user-attachments/assets/17ff08a4-d2cc-4ae0-9fcc-c07873def83e)
 
 
 
+> **Note:**
+> - Qemu stands for quick emulator
+> - Qcow2 stands for qemu copy-on-write 
+> - And this file represent the disk image var/lib/libvirt/images/target_vm.qcow2, it contains the entire vm' disk (OS, apps, files)
 
 
+# Clone VM 
 
-
+From virt-manager click on the vm and it shutoff Or from command line
+```bash
+Virsh shutdown vm
+Virt-clone –original source-vm  --name  target-vm  -f  /var/lib/libvirt/images/target_vm.qcow2
+```
 
 
 
