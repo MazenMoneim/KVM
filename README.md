@@ -1,4 +1,4 @@
-<h1 align="center">
+![image](https://github.com/user-attachments/assets/22ebcf9d-923f-4f5f-9aa8-ae52645a912a)<h1 align="center">
 Kernel-based Virtual Machine
 </h1>  
 
@@ -316,9 +316,70 @@ qemu-system-x86_64 -enable-kvm -m 2048 -hda /path/to/disk.img -cdrom /path/to/is
 - Kvm is the hypervisor
 - Qemu is the command line interface for managing the vms
 - Libvirt is the graphical user interface for managing the vms
+- All of them are collection of software you should make sure they are installed in ur host
 
+<hr/>
 
+# Manage Guest VMs
 
+List all running VMs
+```bash
+virsh list
+```
+List all VMs
+```bash
+virsh list --all
+```
+Start the VM
+```bash
+virsh start <VM-id or Name>
+```
+Stop the VM
+```bash
+virsh shutdown <VM-id or Name>
+```
+Reboot the VM
+```bash
+virsh reboot <VM-id or Name>
+```
+Suspend VM
+```bash
+virsh suspend <VM-id or Name>
+```
+Resume VM
+```bash
+virsh resume <VM-id or Name>
+```
+Destroy VM
+```bash
+virsh shutdown <VM-id or Name>
+virsh undefine <VM-id or Name>
+virsh destroy <VM-id or Name>
+```
+Enter guest's console
+```bash
+virsh console <VM-id or Name>
+```
+Exit guest's console
+```bash
+Ctrl + Alt
+```
+To enable  autostart of the VM with the host
+```bash
+virsh autostart <VM-id or Name>
+```
+To disable autostart of the VM with the host
+```bash
+virsh autostart --disable <VM-id or Name>
+```
+To get the more info about specific VM (configuration of the vm)
+```bash
+virsh dominfo <VM-id or Name>
+```
+To show the uuid for the VM
+```bash
+virsh domuid <VM-id or Name>
+```
 
 
 
