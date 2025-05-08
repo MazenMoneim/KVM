@@ -138,7 +138,7 @@ Runs as a software layer on top of a host operating system.
 </p>
 
 ## Installation Steps
-Check cpu info if it supports the vmx or svm for virtualization
+Check cpu info if it supports the vmx or svm for virtualization:
 
 ```bash
 grep -E --color=auto 'vmx|svm|0xc0f' /proc/cpuinfo
@@ -148,34 +148,34 @@ If there is no output, check the virtualize Intel VT option in processor, VM set
 
 ![image](https://github.com/user-attachments/assets/38cbfa86-72f0-45cf-99d0-add0b33c9f25)
 
-Configure repos in Centos
+Configure repos in Centos:
 ```bash
 sudo vi /etc/yum.repos.d/CentOS-Base.repo
 ```
-Edit the baseurl and hash the mirror
+Edit the baseurl and hash the mirror:
 ```bash
 baseurl=http://vault.centos.org/7.9.2009/os/$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=7&arch=$basearch&repo=os&infra=stock
 ```
-After editing use this commands
+After editing use this commands:
 ```bash
 sudo yum clean all
 sudo yum makecache
 sudo yum update
 ```
-Install these packages
+Install these packages:
 ```bash
 yum install virt-install qemu-kvm libvirt libvirt-python libquestfs-tools virt-manager -y
 ```
-Enable the libvirtd daemon
+Enable the libvirtd daemon:
 ```bash
 systemctl enable --now libvirtd
 ```
-Reboot the kvm-host
+Reboot the kvm-host:
 ```bash
 systemctl reboot
 ```
-Ensure the kernel modules for kvm are loaded
+Ensure the kernel modules for kvm are loaded:
 ```bash
 modinfo kvm_intel
 modinfo kvm
@@ -184,7 +184,7 @@ Configure the network in the kvm-host
 > **Note:**  
 > Libvirtd and it's services create a virtual bridge interface virbr0 with network 192.168.122.0/24 and create a nic virbr0-nic
 
-- edit this file: /etc/sysconfig/network-scripts/ifcfg-<interface-name>
+- edit this file: /etc/sysconfig/network-scripts/ifcfg-<interface-name>:
 ```bash
 TYPE=Ethernet
 BOOTPROTO=none
@@ -192,7 +192,7 @@ NAME=<interface-name>
 ONBOOT=yes
 BRIDGE=virbr0
 ```
-- create this file: /etc/sysconfig/network-scripts/ifcfg-virbr0
+- create this file: /etc/sysconfig/network-scripts/ifcfg-virbr0:
 ```bash
 TYPE=BRIDGE
 DEVICE=virbr0
@@ -202,49 +202,49 @@ IPADDR=<Natting-ip-in-your-system>
 NETMASK=255.255.255.0
 GATWAY=<your-gateway-in-your-system>
 ```
-Enable forwarding 
+Enable forwarding:
 ```bash
 echo net.ipv4.ip_forward = 1 > /usr/lib/sysctl.d/60-libvirtd.conf
 /sbin/sysctl -p /usr/lib/sysctl.d/60-libvirtd.conf
 ```
-Configure the firewalld
+Configure the firewalld:
 ```bash
 firewall-cmd --permanent --direct --passthrough ipv4 -I FORWARD -i bridge0 -j ACCEPT
 firewall-cmd --permanent --direct --passthrough ipv4 -I FORWARD -o bridge0 -j ACCEPT
 firewall-cmd --reload
 ```
-List the interfaces of the kvm-host
+List the interfaces of the kvm-host:
 ```bash
 virsh net-list
 ```
-Edit the default interface
+Edit the default interface:
 ```bash
 virsh net-dumpxml default
 virsh net-edit default
 ```
-Create storage pool for storing th VM images
+Create storage pool for storing th VM images:
 ```bash
 vgcreate lab-kvm-storage /dev/sdb
 lvcreate -l +100%FREE -n lab-kvm-lv lab-kvm-storage
 mkfs.xfs /dev/mapper/lab--kvm--storage-lab--kvm--lv
 ```
-Add the following entry in /etc/fstab
+Add the following entry in /etc/fstab:
 ```bash
 echo "/dev/mapper/lab--kvm--storage-lab--kvm--lv   /var/lib/libvirt/images    xfs    defaults 0  0" >> /etc/fstab
 mount –a
 ```
-Create storage pool and start it, By default the libvirt use directory /var/lib/libvirt/images on a host as an initial file system storage pool
+Create storage pool and start it, By default the libvirt use directory /var/lib/libvirt/images on a host as an initial file system storage pool:
 ```bash
 virsh pool-define-as lab-kvm-storagepool  --type dir --target /var/lib/libvirt/images
 virsh pool-autostart lab-kvm-storagepool
 virsh pool-start  lab-kvm-storagepool
 virsh pool-list
 ```
-To see detailed info about pool
+To see detailed info about pool:
 ```bash
 virsh pool-list --all --details
 ```
-Check if the guest OS is supported by kvm or not
+Check if the guest OS is supported by kvm or not:
 ```bash
 osinfo-query os
 ```
@@ -256,15 +256,15 @@ osinfo-query os
 
 <br/>
 
-Copy the iso from windows to vm in vmware workstation
+Copy the iso from windows to vm in vmware workstation:
 ```bash
 scp "E:\Linux ISO\CentOS-7-x86_64-Minimal-2009.iso" root@<ip-of-kvm-host:/
 ```
-Change the permissions in iso
+Change the permissions in iso:
 ```bash
 chmod 755 name-of-the-iso-file
 ```
-Use virt-manager to create vm in GUI
+Use virt-manager to create vm in GUI:
 ```bash
 virt-manager
 ```
@@ -322,61 +322,61 @@ qemu-system-x86_64 -enable-kvm -m 2048 -hda /path/to/disk.img -cdrom /path/to/is
 
 # Manage Guest VMs
 
-List all running VMs
+List all running VMs:
 ```bash
-virsh list
+virsh list:
 ```
-List all VMs
+List all VMs:
 ```bash
 virsh list --all
 ```
-Start the VM
+Start the VM:
 ```bash
 virsh start <VM-id or Name>
 ```
-Stop the VM
+Stop the VM:
 ```bash
 virsh shutdown <VM-id or Name>
 ```
-Reboot the VM
+Reboot the VM:
 ```bash
 virsh reboot <VM-id or Name>
 ```
-Suspend VM
+Suspend VM:
 ```bash
 virsh suspend <VM-id or Name>
 ```
-Resume VM
+Resume VM:
 ```bash
 virsh resume <VM-id or Name>
 ```
-Destroy VM
+Destroy VM:
 ```bash
 virsh shutdown <VM-id or Name>
 virsh undefine <VM-id or Name>
 virsh destroy <VM-id or Name>
 ```
-Enter guest's console
+Enter guest's console:
 ```bash
 virsh console <VM-id or Name>
 ```
-Exit guest's console
+Exit guest's console:
 ```bash
 Ctrl + Alt
 ```
-To enable  autostart of the VM with the host
+To enable  autostart of the VM with the host:
 ```bash
 virsh autostart <VM-id or Name>
 ```
-To disable autostart of the VM with the host
+To disable autostart of the VM with the host:
 ```bash
 virsh autostart --disable <VM-id or Name>
 ```
-To get the more info about specific VM (configuration of the vm)
+To get the more info about specific VM (configuration of the vm):
 ```bash
 virsh dominfo <VM-id or Name>
 ```
-To show the uuid for the VM
+To show the uuid for the VM:
 ```bash
 virsh domuid <VM-id or Name>
 ```
