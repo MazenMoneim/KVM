@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/2272dd3d-30b6-4ee0-a4ed-d81ceee2f5de)<h1 align="center">
+<h1 align="center">
 Kernel-based Virtual Machine
 </h1>  
 
@@ -391,13 +391,46 @@ virsh domuid <VM-id or Name>
 > - And this file represent the disk image var/lib/libvirt/images/target_vm.qcow2, it contains the entire vm' disk (OS, apps, files)
 
 
-# Clone VM 
+# Clone KVM guest (VM) 
 
 From virt-manager click on the vm and it shutoff Or from command line
 ```bash
 Virsh shutdown vm
 Virt-clone –original source-vm  --name  target-vm  -f  /var/lib/libvirt/images/target_vm.qcow2
 ```
+
+# Backup KVM guest (VM)
+
+First you should shutdown the VM, though you can take backups when guest is running but it can lead to a unhealthy backup image
+```bash
+virsh shutdown <VM-id or Name>
+```
+Copy the disk file
+```bash
+cp –p /var/lib/libvirt/images/guest-vm-image /path-to-backup-location
+```
+
+Copy the conf file
+```bash
+cp –p /etc/libvirt/qemu/guest-vm.xml /path-to-backup-location
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
