@@ -1,5 +1,5 @@
 <h1 align="center">
-Kernel-based Virtual Machine
+Kernel-Based Virtual Machine
 </h1>  
 
 
