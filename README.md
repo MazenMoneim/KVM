@@ -393,7 +393,7 @@ virsh domuid <VM-id or Name>
 
 # Clone KVM guest (VM) 
 
-From virt-manager click on the vm and it shutoff Or from command line
+From virt-manager click on the vm and it shutoff Or from command line:
 ```bash
 Virsh shutdown vm
 Virt-clone –original source-vm  --name  target-vm  -f  /var/lib/libvirt/images/target_vm.qcow2
@@ -401,32 +401,135 @@ Virt-clone –original source-vm  --name  target-vm  -f  /var/lib/libvirt/images
 
 # Backup KVM guest (VM)
 
-First you should shutdown the VM, though you can take backups when guest is running but it can lead to a unhealthy backup image
+First you should shutdown the VM, though you can take backups when guest is running but it can lead to a unhealthy backup image:
 ```bash
 virsh shutdown <VM-id or Name>
 ```
-Copy the disk file
+Copy the disk file:
 ```bash
 cp –p /var/lib/libvirt/images/guest-vm-image /path-to-backup-location
 ```
 
-Copy the conf file
+Copy the conf file:
 ```bash
 cp –p /etc/libvirt/qemu/guest-vm.xml /path-to-backup-location
 ```
 
 
+# Create and restoring guest vm snapshots
+
+List the current snapshots:
+```bash
+virsh snapshot-list vm-name 
+```
+
+Create a snapshot:
+```bash
+virsh snapshot-create-as --domain vm-name –name "snapshot-name" --description "ur-descriptiuon"
+```
+
+Check the details of a snapshot:
+```bash
+virsh snapshot-info –domain vm-name –current
+```
+
+To revert to a snapshot (restore):
+```bash
+virsh shutdown –domain vm-name
+virsh snapshot-revert --domain vm-name --snapshotname "name-of-the-snapeshot"  --running
+```
+
+To delete a snapshot:
+```bash
+virsh snapshot-delete --domain vm-name --snapshot "snapshot-name"
+```
+
+# Expanding the disk size of KVM guest
+
+We wil use qemu-img utility to resize the disk.
+
+Check the details of the image:
+```bash
+Virsh vol-info /var/lib/libvirt/images/vm-name.qcow2
+```
+Expand the disk:
+```bash
+Qemu-img resize /var/lib/libvirt/images/vm-name.qcow2 +2G
+```
+Check the volume again:
+```bash
+Virsh vol-info /var/lib/libvirt/images/vm-name.qcow2
+```
+
+# Repair corrupter QEMU image file
+
+> **Note:**  
+> You have resized the qemu image file and it corrupt ur disk image or ur system gets rebooted a couple of times which leads to corruption of the qemu image, so the solutions is repair the image
+
+Shutdown the vm:
+```bash
+virsh shutdown vm-name
+```
+Install libguestfs-tools packages in the hosting system kvm:
+```bash
+yum install libguestfs-tools
+```
+Perform QEMU image fs repair using guestfish:
+```bash
+guestfish –a /path-to-specific-qemo-image
+run
+list-filesystems
+fsck xfs /dev/sda1
+fsck xfs /dev/centos/root
+q
+```
+Start the VM:
+```bash
+virsh start vm-name
+```
+![image](https://github.com/user-attachments/assets/8858b8df-638c-4a5d-b303-80a292e2ea52)
 
 
 
+# Edit the resources of the VM using command line
+
+![image](https://github.com/user-attachments/assets/4ce84ea9-0ade-45f5-a4ef-f87ad4ef197a)
 
 
+# Performance monitoring and trobleshooting
+Logs files are in /var/log/libvirt/qemu/
 
 
+# Connecting your USB driver to a VM in KVM
+
+![image](https://github.com/user-attachments/assets/fe0e6fa4-d8ef-4633-94d1-ca13cf888e8c)
 
 
+# Setting up shared directory
+Dir that shared between vm on kvm and the kvm host itself
 
+In your host kvm create a directory:
+```bash
+mkdir share
+chmod 777 share/
+touch any file
+```
 
+On the VM GUI
+
+![image](https://github.com/user-attachments/assets/d838626e-1e66-4b36-b801-4001c60f7d70)
+
+![image](https://github.com/user-attachments/assets/51a9856d-d09f-4acf-be4b-8cd3a6f308ec)
+
+On the VM terminal
+![image](https://github.com/user-attachments/assets/3ef83f46-8784-4825-a418-e856624877a9)
+
+![image](https://github.com/user-attachments/assets/9c68b48c-db96-4b15-ba51-a732c4c5231d)
+
+# Convet the virtualbox image to an qcow2 image to work on kvm
+```bash
+qemu-img convert -f vdi -O qcow2 /path-to-name-of-the-image-in-vdi-format /var/lib/libvirt/images/lubunu.qcow2
+```
 
 
 
