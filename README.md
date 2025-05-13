@@ -416,7 +416,7 @@ cp –p /etc/libvirt/qemu/guest-vm.xml /path-to-backup-location
 ```
 
 
-# Create and restoring guest vm snapshots
+# Create and restoring guest VM snapshots
 
 List the current snapshots:
 ```bash
@@ -526,7 +526,7 @@ On the VM terminal
 
 ![image](https://github.com/user-attachments/assets/9c68b48c-db96-4b15-ba51-a732c4c5231d)
 
-# Convet the virtualbox image to an qcow2 image to work on kvm
+# Convet the virtualbox image to an qcow2 image to work on KVM
 ```bash
 qemu-img convert -f vdi -O qcow2 /path-to-name-of-the-image-in-vdi-format /var/lib/libvirt/images/lubunu.qcow2
 ```
